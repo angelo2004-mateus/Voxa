@@ -13,6 +13,7 @@ builder.Services.AddFramework(new DependencyInjectionVoxaRegistrar(), builder.Co
 
 var app = builder.Build();
 
+app.UseExceptionHandler();
 app.UseHttpsRedirection();
 app.UseAuthentication();
 app.UseAuthorization();

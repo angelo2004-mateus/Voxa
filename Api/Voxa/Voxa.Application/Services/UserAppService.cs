@@ -1,5 +1,4 @@
 using Framework.Application.Services;
-using Framework.Domain.Repositories;
 using Framework.Domain.Services;
 using Voxa.Application.Model.Users;
 using Voxa.Domain.Users;
@@ -9,12 +8,14 @@ namespace Voxa.Application.Services;
 public class UserAppService : ApplicationService<User, Guid, UserDto, UserGetParams>
 {
     private readonly IPasswordService _passwordService;
+    private readonly IUserRepository _userRepository;
 
     public UserAppService(
-        IRepository<User, Guid, UserGetParams> repository,
+        IUserRepository repository,
         IPasswordService passwordService) : base(repository)
     {
         _passwordService = passwordService;
+        _userRepository = repository;
     }
 
     public override async Task<IList<UserDto>> GetAllAsync()
@@ -39,6 +40,9 @@ public class UserAppService : ApplicationService<User, Guid, UserDto, UserGetPar
 
     public virtual async Task<UserDto> CreateAsync(UserCreateDto dto)
     {
+        if (await _userRepository.ExistsByEmailAsync(dto.Email))
+            throw new UserEmailAlreadyInUseException(dto.Email);
+
         var user = new User
         {
             Name = dto.Name,

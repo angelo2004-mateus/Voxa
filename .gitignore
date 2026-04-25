@@ -16,6 +16,7 @@ out/
 *.sbr
 *.map
 *.obj
+*.lscache
 
 # NuGet
 *.nupkg
