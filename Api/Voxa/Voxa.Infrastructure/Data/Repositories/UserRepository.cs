@@ -5,7 +5,7 @@ using Voxa.Infrastructure.Data.Persistence;
 
 namespace Voxa.Infrastructure.Data.Repositories;
 
-public class UserRepository : Repository<User, Guid, UserGetParams>
+public class UserRepository : Repository<User, Guid, UserGetParams>, IUserRepository
 {
     public UserRepository(AppDbContext context) : base(context)
     {
@@ -22,5 +22,10 @@ public class UserRepository : Repository<User, Guid, UserGetParams>
             query = query.Where(x => x.Email.Contains(parameters.Email));
 
         return await query.ToListAsync();
+    }
+
+    public virtual async Task<bool> ExistsByEmailAsync(string email)
+    {
+        return await DbSet.AnyAsync(u => u.Email == email);
     }
 }

@@ -1,8 +1,8 @@
 using Framework.Application.Contracts.Auth;
 using Framework.Application.DependencyInjection;
-using Framework.Domain.Repositories;
 using Microsoft.EntityFrameworkCore;
 using Voxa.Application.Services;
+using Voxa.Backoffice.Api.ExceptionHandlers;
 using Voxa.Domain.Users;
 using Voxa.Infrastructure.Auth;
 using Voxa.Infrastructure.Data.Persistence;
@@ -17,8 +17,11 @@ public class DependencyInjectionVoxaRegistrar : IDependencyInjectionFrameworkReg
         services.AddDbContext<AppDbContext>(options =>
             options.UseNpgsql(configuration.GetConnectionString("DefaultConnection")));
 
-        services.AddScoped<IRepository<User, Guid, UserGetParams>, UserRepository>();
+        services.AddScoped<IUserRepository, UserRepository>();
         services.AddScoped<UserAppService>();
         services.AddScoped<IAuthUserStore, UserAuthStore>();
+
+        services.AddExceptionHandler<ExceptionHandlerUserEmailAlreadyInUse>();
+        services.AddProblemDetails();
     }
 }
